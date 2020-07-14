@@ -633,7 +633,7 @@
 
 //#define HOMING_BACKOFF_POST_MM { 2, 2, 2 }  // (mm) Backoff from endstops after homing
 
-#define QUICK_HOME                          // If G28 contains XY do a diagonal move first
+#define QUICK_HOME                            // If G28 contains XY do a diagonal move first
 //#define HOME_Y_BEFORE_X                     // If G28 contains XY home Y before X
 //#define CODEPENDENT_XY_HOMING               // If X/Y can't home without homing Y/X first
 
@@ -717,7 +717,7 @@
   // Define probe X and Y positions for Z1, Z2 [, Z3 [, Z4]]
   // If not defined, probe limits will be used.
   // Override with 'M422 S<index> X<pos> Y<pos>'
-  #define Z_STEPPER_ALIGN_XY { {  10, 190 }, { 100,  10 }, { 190, 190 } }
+  //#define Z_STEPPER_ALIGN_XY { {  10, 190 }, { 100,  10 }, { 190, 190 } }
 
   /**
    * Orientation for the automatically-calculated probe positions.
@@ -759,7 +759,7 @@
 
   // On a 300mm bed a 5% grade would give a misalignment of ~1.5cm
   #define G34_MAX_GRADE              5    // (%) Maximum incline that G34 will handle
-  #define Z_STEPPER_ALIGN_ITERATIONS 5    // Number of iterations to apply during alignment
+  #define Z_STEPPER_ALIGN_ITERATIONS 3    // Number of iterations to apply during alignment
   #define Z_STEPPER_ALIGN_ACC        0.02 // Stop iterating early if the accuracy is better than this
   #define RESTORE_LEVELING_AFTER_G34      // Restore leveling after G34 is done?
   // After G34, re-home Z (G28 Z) or just calculate it from the last probe heights?
@@ -953,7 +953,7 @@
 //#define MICROSTEP16 LOW,LOW,HIGH
 //#define MICROSTEP32 HIGH,LOW,HIGH
 
-// Microstep settings (Requires a board with pins named X_MS1, X_MS2, etc.)
+// Microstep setting (Only functional when stepper driver microstep pins are connected to MCU.
 #define MICROSTEP_MODES { 16, 16, 16, 16, 16, 16 } // [1,2,4,8,16]
 
 /**
@@ -1004,8 +1004,8 @@
    * AZTEEG_X5_MINI_WIFI         0x58              0x5C        MCP4451
    * MIGHTYBOARD_REVE      0x2F (0x5E)                         MCP4018
    */
-  #define DIGIPOT_I2C_ADDRESS_A 0x2C  // Unshifted slave address for first DIGIPOT
-  #define DIGIPOT_I2C_ADDRESS_B 0x2D  // Unshifted slave address for second DIGIPOT
+  //#define DIGIPOT_I2C_ADDRESS_A 0x2C  // Unshifted slave address for first DIGIPOT
+  //#define DIGIPOT_I2C_ADDRESS_B 0x2D  // Unshifted slave address for second DIGIPOT
 #endif
 
 //===========================================================================
@@ -1141,17 +1141,16 @@
    * an option on the LCD screen to continue the print from the last-known
    * point in the file.
    */
-  #define POWER_LOSS_RECOVERY
+  //#define POWER_LOSS_RECOVERY
   #if ENABLED(POWER_LOSS_RECOVERY)
-    #define PLR_ENABLED_DEFAULT   true // Power Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
+    #define PLR_ENABLED_DEFAULT   false // Power Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
     //#define BACKUP_POWER_SUPPLY       // Backup power / UPS to move the steppers on power loss
     //#define POWER_LOSS_ZRAISE       2 // (mm) Z axis raise on resume (on power loss with UPS)
-    //#define POWER_LOSS_PIN         PC12 // Pin to detect power loss. Set to -1 to disable default pin on boards without module.
-    //#define POWER_LOSS_STATE       LOW // State of pin indicating power loss
+    //#define POWER_LOSS_PIN         44 // Pin to detect power loss. Set to -1 to disable default pin on boards without module.
+    //#define POWER_LOSS_STATE     HIGH // State of pin indicating power loss
     //#define POWER_LOSS_PULL           // Set pullup / pulldown as appropriate
-    #define POWER_LOSS_PURGE_LEN   20 // (mm) Length of filament to purge on resume
-    #define POWER_LOSS_RETRACT_LEN 10 // (mm) Length of filament to retract on fail. Requires backup power.
-
+    //#define POWER_LOSS_PURGE_LEN   20 // (mm) Length of filament to purge on resume
+    //#define POWER_LOSS_RETRACT_LEN 10 // (mm) Length of filament to retract on fail. Requires backup power.
     // Without a POWER_LOSS_PIN the following option helps reduce wear on the SD card,
     // especially with "vase mode" printing. Set too high and vases cannot be continued.
     #define POWER_LOSS_MIN_Z_CHANGE 0.05 // (mm) Minimum Z change before saving power-loss data
@@ -1284,7 +1283,7 @@
      *
      * :[ 'LCD', 'ONBOARD', 'CUSTOM_CABLE' ]
      */
-    //#define SDCARD_CONNECTION ONBOARD
+    #define SDCARD_CONNECTION ONBOARD
   #endif
 
 #endif // SDSUPPORT
@@ -1362,7 +1361,7 @@
   #define STATUS_HOTEND_INVERTED      // Show solid nozzle bitmaps when heating (Requires STATUS_HOTEND_ANIM)
   #define STATUS_HOTEND_ANIM          // Use a second bitmap to indicate hotend heating
   #define STATUS_BED_ANIM             // Use a second bitmap to indicate bed heating
-  //#define STATUS_CHAMBER_ANIM         // Use a second bitmap to indicate chamber heating
+  #define STATUS_CHAMBER_ANIM         // Use a second bitmap to indicate chamber heating
   //#define STATUS_CUTTER_ANIM        // Use a second bitmap to indicate spindle / laser active
   //#define STATUS_ALT_BED_BITMAP     // Use the alternative bed bitmap
   //#define STATUS_ALT_FAN_BITMAP     // Use the alternative fan bitmap
@@ -1555,15 +1554,15 @@
   //#define BABYSTEP_WITHOUT_HOMING
   //#define BABYSTEP_XY                     // Also enable X/Y Babystepping. Not supported on DELTA!
   #define BABYSTEP_INVERT_Z false           // Change if Z babysteps should go the other way
-  #define BABYSTEP_MILLIMETER_UNITS       // Specify BABYSTEP_MULTIPLICATOR_(XY|Z) in mm instead of micro-steps
-  #define BABYSTEP_MULTIPLICATOR_Z  4       // (steps or mm) Steps or millimeter distance for each Z babystep
+  //#define BABYSTEP_MILLIMETER_UNITS       // Specify BABYSTEP_MULTIPLICATOR_(XY|Z) in mm instead of micro-steps
+  #define BABYSTEP_MULTIPLICATOR_Z  1       // (steps or mm) Steps or millimeter distance for each Z babystep
   #define BABYSTEP_MULTIPLICATOR_XY 1       // (steps or mm) Steps or millimeter distance for each XY babystep
 
   #define DOUBLECLICK_FOR_Z_BABYSTEPPING    // Double-click on the Status Screen for Z Babystepping.
   #if ENABLED(DOUBLECLICK_FOR_Z_BABYSTEPPING)
     #define DOUBLECLICK_MAX_INTERVAL 1250   // Maximum interval between clicks, in milliseconds.
                                             // Note: Extra time may be added to mitigate controller latency.
-    #define BABYSTEP_ALWAYS_AVAILABLE       // Allow babystepping at all times (not just during movement).
+    //#define BABYSTEP_ALWAYS_AVAILABLE     // Allow babystepping at all times (not just during movement).
     //#define MOVE_Z_WHEN_IDLE              // Jump to the move Z menu on doubleclick when printer is idle.
     #if ENABLED(MOVE_Z_WHEN_IDLE)
       #define MOVE_Z_IDLE_MULTIPLICATOR 1   // Multiply 1mm by this factor for the move step size.
@@ -1575,7 +1574,7 @@
   #define BABYSTEP_ZPROBE_OFFSET            // Combine M851 Z and Babystepping
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     //#define BABYSTEP_HOTEND_Z_OFFSET      // For multiple hotends, babystep relative Z offsets
-    #define BABYSTEP_ZPROBE_GFX_OVERLAY     // Enable graphical overlay on Z-offset editor
+    //#define BABYSTEP_ZPROBE_GFX_OVERLAY   // Enable graphical overlay on Z-offset editor
   #endif
 #endif
 
@@ -1737,7 +1736,7 @@
 //
 // G2/G3 Arc Support
 //
-//#define ARC_SUPPORT                 // Disable this feature to save ~3226 bytes
+//#define ARC_SUPPORT               // Disable this feature to save ~3226 bytes
 #if ENABLED(ARC_SUPPORT)
   #define MM_PER_ARC_SEGMENT      1 // (mm) Length (or minimum length) of each arc segment
   //#define ARC_SEGMENTS_PER_R    1 // Max segment length, MM_PER = Min
@@ -1834,18 +1833,18 @@
 // The number of linear moves that can be in the planner at once.
 // The value of BLOCK_BUFFER_SIZE must be a power of 2 (e.g. 8, 16, 32)
 #if BOTH(SDSUPPORT, DIRECT_STEPPING)
-  #define BLOCK_BUFFER_SIZE  16
+  #define BLOCK_BUFFER_SIZE  8
 #elif ENABLED(SDSUPPORT)
-  #define BLOCK_BUFFER_SIZE 16
+  #define BLOCK_BUFFER_SIZE 32
 #else
-  #define BLOCK_BUFFER_SIZE 16
+  #define BLOCK_BUFFER_SIZE 32
 #endif
 
 // @section serial
 
 // The ASCII buffer for serial input
 #define MAX_CMD_SIZE 96
-#define BUFSIZE 4
+#define BUFSIZE 32
 
 // Transmission to Host Buffer Size
 // To save 386 bytes of PROGMEM (and TX_BUFFER_SIZE+3 bytes of RAM) set to 0.
@@ -1854,7 +1853,7 @@
 // For debug-echo: 128 bytes for the optimal speed.
 // Other output doesn't need to be that speedy.
 // :[0, 2, 4, 8, 16, 32, 64, 128, 256]
-#define TX_BUFFER_SIZE 0
+#define TX_BUFFER_SIZE 32
 
 // Host Receive Buffer Size
 // Without XON/XOFF flow control (see SERIAL_XON_XOFF below) 32 bytes should be enough.
@@ -1959,7 +1958,7 @@
  */
 #if EXTRUDERS > 1
   // Z raise distance for tool-change, as needed for some extruders
-  #define TOOLCHANGE_ZRAISE     2  // (mm)
+  #define TOOLCHANGE_ZRAISE                 2 // (mm)
   //#define TOOLCHANGE_ZRAISE_BEFORE_RETRACT  // Apply raise before swap retraction (if enabled)
   //#define TOOLCHANGE_NO_RETURN              // Never return to previous position on tool-change
   #if ENABLED(TOOLCHANGE_NO_RETURN)
@@ -1974,9 +1973,9 @@
   #if ENABLED(TOOLCHANGE_FILAMENT_SWAP)
     // Load / Unload
     #define TOOLCHANGE_FS_LENGTH              12  // (mm) Load / Unload length
-    #define TOOLCHANGE_FS_EXTRA_RESUME_LENGTH  2  // (mm) Extra length for better restart, fine tune by LCD/Gcode)
-    #define TOOLCHANGE_FS_RETRACT_SPEED     3600  // (mm/m) (Unloading)
-    #define TOOLCHANGE_FS_UNRETRACT_SPEED   3600  // (mm/m) (On SINGLENOZZLE or Bowden loading must be slowed down)
+    #define TOOLCHANGE_FS_EXTRA_RESUME_LENGTH  0  // (mm) Extra length for better restart, fine tune by LCD/Gcode)
+    #define TOOLCHANGE_FS_RETRACT_SPEED   (50*60) // (mm/m) (Unloading)
+    #define TOOLCHANGE_FS_UNRETRACT_SPEED (25*60) // (mm/m) (On SINGLENOZZLE or Bowden loading must be slowed down)
 
     // Longer prime to clean out a SINGLENOZZLE
     #define TOOLCHANGE_FS_EXTRA_PRIME          0  // (mm) Extra priming length
@@ -2467,6 +2466,166 @@
   #define E7_HYBRID_THRESHOLD     30
 
   /**
+   * CoolStep. Currently supported for TMC2130, TMC2209, TMC5130 and TMC5160 only.
+   * This mode allows for cooler steppers and energy savings.
+   * The driver will switch to coolStep when stepper speed is over COOLSTEP_THRESHOLD mm/s.
+   *
+   * If SG_RESULT goes below COOLSTEP_LOWER_LOAD_THRESHOLD * 32 stepper current will be increased.
+   * Set to 0 to disable CoolStep.
+   *
+   * If SG_RESULT goes above (COOLSTEP_LOWER_LOAD_THRESHOLD + COOLSTEP_UPPER_LOAD_THRESHOLD + 1) * 32
+   * stepper current will be decreased.
+   *
+   * SEUP sets the increase step width. Value range is 0..3 and computed as 2^SEUP.
+   * SEDN sets the decrease delay. Value range is 0..3, 0 being the slowest.
+   * SEIMIN sets the lower current limit. 0: 1/2 of IRUN, 1:1/4 of IRUN
+   */
+
+  #if AXIS_HAS_COOLSTEP(X)
+    #define X_COOLSTEP_SPEED_THRESHOLD        5
+    #define X_COOLSTEP_LOWER_LOAD_THRESHOLD   0
+    #define X_COOLSTEP_UPPER_LOAD_THRESHOLD   0
+    #define X_COOLSTEP_SEUP                   0
+    #define X_COOLSTEP_SEDN                   0
+    #define X_COOLSTEP_SEIMIN                 0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(X2)
+    #define X2_COOLSTEP_SPEED_THRESHOLD       5
+    #define X2_COOLSTEP_LOWER_LOAD_THRESHOLD  0
+    #define X2_COOLSTEP_UPPER_LOAD_THRESHOLD  0
+    #define X2_COOLSTEP_SEUP                  0
+    #define X2_COOLSTEP_SEDN                  0
+    #define X2_COOLSTEP_SEIMIN                0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(Y)
+    #define Y_COOLSTEP_SPEED_THRESHOLD        5
+    #define Y_COOLSTEP_LOWER_LOAD_THRESHOLD   0
+    #define Y_COOLSTEP_UPPER_LOAD_THRESHOLD   0
+    #define Y_COOLSTEP_SEUP                   0
+    #define Y_COOLSTEP_SEDN                   0
+    #define Y_COOLSTEP_SEIMIN                 0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(Y2)
+    #define Y2_COOLSTEP_SPEED_THRESHOLD       5
+    #define Y2_COOLSTEP_LOWER_LOAD_THRESHOLD  0
+    #define Y2_COOLSTEP_UPPER_LOAD_THRESHOLD  0
+    #define Y2_COOLSTEP_SEUP                  0
+    #define Y2_COOLSTEP_SEDN                  0
+    #define Y2_COOLSTEP_SEIMIN                0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(Z)
+    #define Z_COOLSTEP_SPEED_THRESHOLD        5
+    #define Z_COOLSTEP_LOWER_LOAD_THRESHOLD   0
+    #define Z_COOLSTEP_UPPER_LOAD_THRESHOLD   0
+    #define Z_COOLSTEP_SEUP                   0
+    #define Z_COOLSTEP_SEDN                   0
+    #define Z_COOLSTEP_SEIMIN                 0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(Z2)
+    #define Z2_COOLSTEP_SPEED_THRESHOLD       5
+    #define Z2_COOLSTEP_LOWER_LOAD_THRESHOLD  0
+    #define Z2_COOLSTEP_UPPER_LOAD_THRESHOLD  0
+    #define Z2_COOLSTEP_SEUP                  0
+    #define Z2_COOLSTEP_SEDN                  0
+    #define Z2_COOLSTEP_SEIMIN                0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(Z3)
+    #define Z3_COOLSTEP_SPEED_THRESHOLD       5
+    #define Z3_COOLSTEP_LOWER_LOAD_THRESHOLD  0
+    #define Z3_COOLSTEP_UPPER_LOAD_THRESHOLD  0
+    #define Z3_COOLSTEP_SEUP                  0
+    #define Z3_COOLSTEP_SEDN                  0
+    #define Z3_COOLSTEP_SEIMIN                0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(Z4)
+    #define Z4_COOLSTEP_SPEED_THRESHOLD       5
+    #define Z4_COOLSTEP_LOWER_LOAD_THRESHOLD  0
+    #define Z4_COOLSTEP_UPPER_LOAD_THRESHOLD  0
+    #define Z4_COOLSTEP_SEUP                  0
+    #define Z4_COOLSTEP_SEDN                  0
+    #define Z4_COOLSTEP_SEIMIN                0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(E0)
+    #define E0_COOLSTEP_SPEED_THRESHOLD       5
+    #define E0_COOLSTEP_LOWER_LOAD_THRESHOLD  0
+    #define E0_COOLSTEP_UPPER_LOAD_THRESHOLD  0
+    #define E0_COOLSTEP_SEUP                  0
+    #define E0_COOLSTEP_SEDN                  0
+    #define E0_COOLSTEP_SEIMIN                0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(E1)
+    #define E1_COOLSTEP_SPEED_THRESHOLD       5
+    #define E1_COOLSTEP_LOWER_LOAD_THRESHOLD  0
+    #define E1_COOLSTEP_UPPER_LOAD_THRESHOLD  0
+    #define E1_COOLSTEP_SEUP                  0
+    #define E1_COOLSTEP_SEDN                  0
+    #define E1_COOLSTEP_SEIMIN                0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(E2)
+    #define E2_COOLSTEP_SPEED_THRESHOLD       5
+    #define E2_COOLSTEP_LOWER_LOAD_THRESHOLD  0
+    #define E2_COOLSTEP_UPPER_LOAD_THRESHOLD  0
+    #define E2_COOLSTEP_SEUP                  0
+    #define E2_COOLSTEP_SEDN                  0
+    #define E2_COOLSTEP_SEIMIN                0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(E3)
+    #define E3_COOLSTEP_SPEED_THRESHOLD       5
+    #define E3_COOLSTEP_LOWER_LOAD_THRESHOLD  0
+    #define E3_COOLSTEP_UPPER_LOAD_THRESHOLD  0
+    #define E3_COOLSTEP_SEUP                  0
+    #define E3_COOLSTEP_SEDN                  0
+    #define E3_COOLSTEP_SEIMIN                0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(E4)
+    #define E4_COOLSTEP_SPEED_THRESHOLD       5
+    #define E4_COOLSTEP_LOWER_LOAD_THRESHOLD  0
+    #define E4_COOLSTEP_UPPER_LOAD_THRESHOLD  0
+    #define E4_COOLSTEP_SEUP                  0
+    #define E4_COOLSTEP_SEDN                  0
+    #define E4_COOLSTEP_SEIMIN                0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(E5)
+    #define E5_COOLSTEP_SPEED_THRESHOLD       5
+    #define E5_COOLSTEP_LOWER_LOAD_THRESHOLD  0
+    #define E5_COOLSTEP_UPPER_LOAD_THRESHOLD  0
+    #define E5_COOLSTEP_SEUP                  0
+    #define E5_COOLSTEP_SEDN                  0
+    #define E5_COOLSTEP_SEIMIN                0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(E6)
+    #define E6_COOLSTEP_SPEED_THRESHOLD       5
+    #define E6_COOLSTEP_LOWER_LOAD_THRESHOLD  0
+    #define E6_COOLSTEP_UPPER_LOAD_THRESHOLD  0
+    #define E6_COOLSTEP_SEUP                  0
+    #define E6_COOLSTEP_SEDN                  0
+    #define E6_COOLSTEP_SEIMIN                0
+  #endif
+
+  #if AXIS_HAS_COOLSTEP(E7)
+    #define E7_COOLSTEP_SPEED_THRESHOLD       5
+    #define E7_COOLSTEP_LOWER_LOAD_THRESHOLD  0
+    #define E7_COOLSTEP_UPPER_LOAD_THRESHOLD  0
+    #define E7_COOLSTEP_SEUP                  0
+    #define E7_COOLSTEP_SEDN                  0
+    #define E7_COOLSTEP_SEIMIN                0
+  #endif
+
+  /**
    * Use StallGuard2 to home / probe X, Y, Z.
    *
    * TMC2130, TMC2160, TMC2209, TMC2660, TMC5130, and TMC5160 only
@@ -2527,7 +2686,7 @@
    * Enable M122 debugging command for TMC stepper drivers.
    * M122 S0/1 will enable continous reporting.
    */
-  #define TMC_DEBUG
+  //#define TMC_DEBUG
 
   /**
    * You can set your own advanced settings by filling in predefined functions.
@@ -2842,7 +3001,7 @@
 #if EITHER(SPINDLE_FEATURE, LASER_FEATURE)
   #define SPINDLE_LASER_ACTIVE_HIGH     false  // Set to "true" if the on/off function is active HIGH
   #define SPINDLE_LASER_PWM             true   // Set to "true" if your controller supports setting the speed/power
-  #define SPINDLE_LASER_PWM_INVERT      true  // Set to "true" if the speed/power goes up when you want it to go slower
+  #define SPINDLE_LASER_PWM_INVERT      false  // Set to "true" if the speed/power goes up when you want it to go slower
 
   #define SPINDLE_LASER_FREQUENCY       2500   // (Hz) Spindle/laser frequency (only on supported HALs: AVR and LPC)
 
@@ -3410,7 +3569,7 @@
     // This is for Prusa MK3-style extruders. Customize for your hardware.
     #define MMU2_FILAMENTCHANGE_EJECT_FEED 80.0
     #define MMU2_LOAD_TO_NOZZLE_SEQUENCE \
-      {  7.2,  562 }, \
+      {  7.2, 1145 }, \
       { 14.4,  871 }, \
       { 36.0, 1393 }, \
       { 14.4,  871 }, \
