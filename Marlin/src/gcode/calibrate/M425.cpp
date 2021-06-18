@@ -52,10 +52,7 @@ void GcodeSuite::M425() {
       LINEAR_AXIS_CODE(
         case X_AXIS: return AXIS_CAN_CALIBRATE(X),
         case Y_AXIS: return AXIS_CAN_CALIBRATE(Y),
-        case Z_AXIS: return AXIS_CAN_CALIBRATE(Z),
-        case I_AXIS: return AXIS_CAN_CALIBRATE(I),
-        case J_AXIS: return AXIS_CAN_CALIBRATE(J),
-        case K_AXIS: return AXIS_CAN_CALIBRATE(K),
+        case Z_AXIS: return AXIS_CAN_CALIBRATE(Z)
       );
     }
   };
