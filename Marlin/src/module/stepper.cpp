@@ -498,7 +498,7 @@ void Stepper::set_directions() {
         MIXER_STEPPER_LOOP(j) NORM_E_DIR(j);
         count_direction.e = 1;
       }
-    #elif HAS_EXTRUDERS
+    #else
       if (motor_direction(E_AXIS)) {
         REV_E_DIR(stepper_extruder);
         count_direction.e = -1;
@@ -1627,7 +1627,7 @@ void Stepper::pulse_phase_isr() {
           PAGE_PULSE_PREP(X);
           PAGE_PULSE_PREP(Y);
           PAGE_PULSE_PREP(Z);
-          TERN_(HAS_EXTRUDERS, PAGE_PULSE_PREP(E));
+          PAGE_PULSE_PREP(E);
 
           page_step_state.segment_steps++;
 
@@ -1660,7 +1660,7 @@ void Stepper::pulse_phase_isr() {
           PAGE_PULSE_PREP(X);
           PAGE_PULSE_PREP(Y);
           PAGE_PULSE_PREP(Z);
-          TERN_(HAS_EXTRUDERS, PAGE_PULSE_PREP(E));
+          PAGE_PULSE_PREP(E);
 
           page_step_state.segment_steps++;
 
@@ -2103,15 +2103,13 @@ uint32_t Stepper::block_phase_isr() {
       #endif
 
       uint8_t axis_bits = 0;
-      LINEAR_AXIS_CODE(
-        if (X_MOVE_TEST) SBI(axis_bits, A_AXIS),
-        if (Y_MOVE_TEST) SBI(axis_bits, B_AXIS),
-        if (Z_MOVE_TEST) SBI(axis_bits, C_AXIS)
-      );
-      //if (current_block->steps.e) SBI(axis_bits, E_AXIS);
-      //if (current_block->steps.a) SBI(axis_bits, X_HEAD);
-      //if (current_block->steps.b) SBI(axis_bits, Y_HEAD);
-      //if (current_block->steps.c) SBI(axis_bits, Z_HEAD);
+      if (X_MOVE_TEST) SBI(axis_bits, A_AXIS);
+      if (Y_MOVE_TEST) SBI(axis_bits, B_AXIS);
+      if (Z_MOVE_TEST) SBI(axis_bits, C_AXIS);
+      //if (!!current_block->steps.e) SBI(axis_bits, E_AXIS);
+      //if (!!current_block->steps.a) SBI(axis_bits, X_HEAD);
+      //if (!!current_block->steps.b) SBI(axis_bits, Y_HEAD);
+      //if (!!current_block->steps.c) SBI(axis_bits, Z_HEAD);
       axis_did_move = axis_bits;
 
       // No acceleration / deceleration time elapsed so far
@@ -2608,13 +2606,9 @@ void Stepper::init() {
   #endif
 
   // Init direction bits for first moves
-  set_directions(0
-    LINEAR_AXIS_GANG(
-      | TERN0(INVERT_X_DIR, _BV(X_AXIS)),
-      | TERN0(INVERT_Y_DIR, _BV(Y_AXIS)),
-      | TERN0(INVERT_Z_DIR, _BV(Z_AXIS))
-    )
-  );
+  set_directions((INVERT_X_DIR ? _BV(X_AXIS) : 0)
+               | (INVERT_Y_DIR ? _BV(Y_AXIS) : 0)
+               | (INVERT_Z_DIR ? _BV(Z_AXIS) : 0));
 
   #if HAS_MOTOR_CURRENT_SPI || HAS_MOTOR_CURRENT_PWM
     initialized = true;
@@ -2631,9 +2625,7 @@ void Stepper::init() {
  * This allows get_axis_position_mm to correctly
  * derive the current XYZ position later on.
  */
-void Stepper::_set_position(
-  LOGICAL_AXIS_LIST(const int32_t &e, const int32_t &a, const int32_t &b, const int32_t &c)
-) {
+void Stepper::_set_position(const int32_t &a, const int32_t &b, const int32_t &c, const int32_t &e) {
   #if CORE_IS_XY
     // corexy positioning
     // these equations follow the form of the dA and dB equations on https://www.corexy.com/theory.html
@@ -2648,9 +2640,9 @@ void Stepper::_set_position(
     count_position.set(a - b, b, c);
   #else
     // default non-h-bot planning
-    count_position.set(LINEAR_AXIS_LIST(a, b, c));
+    count_position.set(a, b, c);
   #endif
-  TERN_(HAS_EXTRUDERS, count_position.e = e);
+  count_position.e = e;
 }
 
 /**
@@ -2673,13 +2665,10 @@ int32_t Stepper::position(const AxisEnum axis) {
 }
 
 // Set the current position in steps
-//TODO: Test for LINEAR_AXES >= 4
-void Stepper::set_position(
-  LOGICAL_AXIS_LIST(const int32_t &e, const int32_t &a, const int32_t &b, const int32_t &c)
-) {
+void Stepper::set_position(const int32_t &a, const int32_t &b, const int32_t &c, const int32_t &e) {
   planner.synchronize();
   const bool was_enabled = suspend();
-  _set_position(LOGICAL_AXIS_LIST(e, a, b, c));
+  _set_position(a, b, c, e);
   if (was_enabled) wake_up();
 }
 
@@ -2754,11 +2743,10 @@ void Stepper::report_a_position(const xyz_long_t &pos) {
     SERIAL_ECHOPAIR_P(PSTR(STR_COUNT_X), pos.x, SP_Y_LBL, pos.y);
   #endif
   #if ANY(CORE_IS_XZ, CORE_IS_YZ, DELTA)
-    SERIAL_ECHOPAIR(" C:", pos.z);
-  #elif LINEAR_AXES >= 3
-    SERIAL_ECHOPAIR_P(SP_Z_LBL, pos.z);
+    SERIAL_ECHOLNPAIR(" C:", pos.z);
+  #else
+    SERIAL_ECHOLNPAIR_P(SP_Z_LBL, pos.z);
   #endif
-  SERIAL_EOL();
 }
 
 void Stepper::report_positions() {
@@ -2915,7 +2903,7 @@ void Stepper::report_positions() {
 
           DIR_WAIT_BEFORE();
 
-          const xyz_byte_t old_dir = LINEAR_AXIS_ARRAY(X_DIR_READ(), Y_DIR_READ(), Z_DIR_READ());
+          const xyz_byte_t old_dir = { X_DIR_READ(), Y_DIR_READ(), Z_DIR_READ() };
 
           X_DIR_WRITE(INVERT_X_DIR ^ z_direction);
           Y_DIR_WRITE(INVERT_Y_DIR ^ z_direction);

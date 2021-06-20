@@ -415,95 +415,6 @@
 #if ANY_TEMP_SENSOR_IS(1000)
   #define HAS_USER_THERMISTORS 1
 #endif
-#undef ANY_TEMP_SENSOR_IS
-
-// Usurp a sensor to do redundant readings
-#if TEMP_SENSOR_REDUNDANT
-  #ifndef TEMP_SENSOR_REDUNDANT_SOURCE
-    #define TEMP_SENSOR_REDUNDANT_SOURCE 1
-  #endif
-  #ifndef TEMP_SENSOR_REDUNDANT_TARGET
-    #define TEMP_SENSOR_REDUNDANT_TARGET 0
-  #endif
-  #if !PIN_EXISTS(TEMP_REDUNDANT)
-    #ifndef TEMP_SENSOR_REDUNDANT_MAX_DIFF
-      #define TEMP_SENSOR_REDUNDANT_MAX_DIFF 10
-    #endif
-    #if TEMP_SENSOR_REDUNDANT_SOURCE == -5
-      #if !PIN_EXISTS(TEMP_COOLER)
-        #error "TEMP_SENSOR_REDUNDANT_SOURCE set to COOLER requires TEMP_COOLER_PIN."
-      #else
-        #define TEMP_REDUNDANT_PIN TEMP_COOLER_PIN
-      #endif
-    #elif TEMP_SENSOR_REDUNDANT_SOURCE == -4
-      #if !PIN_EXISTS(TEMP_PROBE)
-        #error "TEMP_SENSOR_REDUNDANT_SOURCE set to PROBE requires TEMP_PROBE_PIN."
-      #else
-        #define TEMP_REDUNDANT_PIN TEMP_PROBE_PIN
-      #endif
-    #elif TEMP_SENSOR_REDUNDANT_SOURCE == -2
-      #if !PIN_EXISTS(TEMP_CHAMBER)
-        #error "TEMP_SENSOR_REDUNDANT_SOURCE set to CHAMBER requires TEMP_CHAMBER_PIN."
-      #else
-        #define TEMP_REDUNDANT_PIN TEMP_CHAMBER_PIN
-      #endif
-    #elif TEMP_SENSOR_REDUNDANT_SOURCE == -1
-      #if !PIN_EXISTS(TEMP_BED)
-        #error "TEMP_SENSOR_REDUNDANT_SOURCE set to BED requires TEMP_BED_PIN."
-      #else
-        #define TEMP_REDUNDANT_PIN TEMP_BED_PIN
-      #endif
-    #elif TEMP_SENSOR_REDUNDANT_SOURCE == 0
-      #if !PIN_EXISTS(TEMP_0)
-        #error "TEMP_SENSOR_REDUNDANT_SOURCE set to 0 requires TEMP_0_PIN."
-      #else
-        #define TEMP_REDUNDANT_PIN TEMP_0_PIN
-      #endif
-    #elif TEMP_SENSOR_REDUNDANT_SOURCE == 1
-      #if !PIN_EXISTS(TEMP_1)
-        #error "TEMP_SENSOR_REDUNDANT_SOURCE set to 1 requires TEMP_1_PIN."
-      #else
-        #define TEMP_REDUNDANT_PIN TEMP_1_PIN
-      #endif
-    #elif TEMP_SENSOR_REDUNDANT_SOURCE == 2
-      #if !PIN_EXISTS(TEMP_2)
-        #error "TEMP_SENSOR_REDUNDANT_SOURCE set to 2 requires TEMP_2_PIN."
-      #else
-        #define TEMP_REDUNDANT_PIN TEMP_2_PIN
-      #endif
-    #elif TEMP_SENSOR_REDUNDANT_SOURCE == 3
-      #if !PIN_EXISTS(TEMP_3)
-        #error "TEMP_SENSOR_REDUNDANT_SOURCE set to 3 requires TEMP_3_PIN."
-      #else
-        #define TEMP_REDUNDANT_PIN TEMP_3_PIN
-      #endif
-    #elif TEMP_SENSOR_REDUNDANT_SOURCE == 4
-      #if !PIN_EXISTS(TEMP_4)
-        #error "TEMP_SENSOR_REDUNDANT_SOURCE set to 4 requires TEMP_4_PIN."
-      #else
-        #define TEMP_REDUNDANT_PIN TEMP_4_PIN
-      #endif
-    #elif TEMP_SENSOR_REDUNDANT_SOURCE == 5
-      #if !PIN_EXISTS(TEMP_5)
-        #error "TEMP_SENSOR_REDUNDANT_SOURCE set to 5 requires TEMP_5_PIN."
-      #else
-        #define TEMP_REDUNDANT_PIN TEMP_5_PIN
-      #endif
-    #elif TEMP_SENSOR_REDUNDANT_SOURCE == 6
-      #if !PIN_EXISTS(TEMP_6)
-        #error "TEMP_SENSOR_REDUNDANT_SOURCE set to 6 requires TEMP_6_PIN."
-      #else
-        #define TEMP_REDUNDANT_PIN TEMP_6_PIN
-      #endif
-    #elif TEMP_SENSOR_REDUNDANT_SOURCE == 7
-      #if !PIN_EXISTS(TEMP_7)
-        #error "TEMP_SENSOR_REDUNDANT_SOURCE set to 7 requires TEMP_7_PIN."
-      #else
-        #define TEMP_REDUNDANT_PIN TEMP_7_PIN
-      #endif
-    #endif
-  #endif
-#endif
 
 #if TEMP_SENSOR_0 == -5 || TEMP_SENSOR_0 == -3 || TEMP_SENSOR_0 == -2
   #define TEMP_SENSOR_0_IS_MAX_TC 1
@@ -1652,137 +1563,133 @@
 #endif
 
 // Extruder steppers and solenoids
-#if HAS_EXTRUDERS
+#if PIN_EXISTS(E0_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E0))
+  #define HAS_E0_ENABLE 1
+#endif
+#if PIN_EXISTS(E0_DIR)
+  #define HAS_E0_DIR 1
+#endif
+#if PIN_EXISTS(E0_STEP)
+  #define HAS_E0_STEP 1
+#endif
+#if PIN_EXISTS(E0_MS1)
+  #define HAS_E0_MS_PINS 1
+#endif
+#if PIN_EXISTS(SOL0)
+  #define HAS_SOLENOID_0 1
+#endif
 
-  #if PIN_EXISTS(E0_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E0))
-    #define HAS_E0_ENABLE 1
-  #endif
-  #if PIN_EXISTS(E0_DIR)
-    #define HAS_E0_DIR 1
-  #endif
-  #if PIN_EXISTS(E0_STEP)
-    #define HAS_E0_STEP 1
-  #endif
-  #if PIN_EXISTS(E0_MS1)
-    #define HAS_E0_MS_PINS 1
-  #endif
-  #if PIN_EXISTS(SOL0)
-    #define HAS_SOLENOID_0 1
-  #endif
+#if PIN_EXISTS(E1_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E1))
+  #define HAS_E1_ENABLE 1
+#endif
+#if PIN_EXISTS(E1_DIR)
+  #define HAS_E1_DIR 1
+#endif
+#if PIN_EXISTS(E1_STEP)
+  #define HAS_E1_STEP 1
+#endif
+#if PIN_EXISTS(E1_MS1)
+  #define HAS_E1_MS_PINS 1
+#endif
+#if PIN_EXISTS(SOL1)
+  #define HAS_SOLENOID_1 1
+#endif
 
-  #if PIN_EXISTS(E1_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E1))
-    #define HAS_E1_ENABLE 1
-  #endif
-  #if PIN_EXISTS(E1_DIR)
-    #define HAS_E1_DIR 1
-  #endif
-  #if PIN_EXISTS(E1_STEP)
-    #define HAS_E1_STEP 1
-  #endif
-  #if PIN_EXISTS(E1_MS1)
-    #define HAS_E1_MS_PINS 1
-  #endif
-  #if PIN_EXISTS(SOL1)
-    #define HAS_SOLENOID_1 1
-  #endif
+#if PIN_EXISTS(E2_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E2))
+  #define HAS_E2_ENABLE 1
+#endif
+#if PIN_EXISTS(E2_DIR)
+  #define HAS_E2_DIR 1
+#endif
+#if PIN_EXISTS(E2_STEP)
+  #define HAS_E2_STEP 1
+#endif
+#if PIN_EXISTS(E2_MS1)
+  #define HAS_E2_MS_PINS 1
+#endif
+#if PIN_EXISTS(SOL2)
+  #define HAS_SOLENOID_2 1
+#endif
 
-  #if PIN_EXISTS(E2_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E2))
-    #define HAS_E2_ENABLE 1
-  #endif
-  #if PIN_EXISTS(E2_DIR)
-    #define HAS_E2_DIR 1
-  #endif
-  #if PIN_EXISTS(E2_STEP)
-    #define HAS_E2_STEP 1
-  #endif
-  #if PIN_EXISTS(E2_MS1)
-    #define HAS_E2_MS_PINS 1
-  #endif
-  #if PIN_EXISTS(SOL2)
-    #define HAS_SOLENOID_2 1
-  #endif
+#if PIN_EXISTS(E3_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E3))
+  #define HAS_E3_ENABLE 1
+#endif
+#if PIN_EXISTS(E3_DIR)
+  #define HAS_E3_DIR 1
+#endif
+#if PIN_EXISTS(E3_STEP)
+  #define HAS_E3_STEP 1
+#endif
+#if PIN_EXISTS(E3_MS1)
+  #define HAS_E3_MS_PINS 1
+#endif
+#if PIN_EXISTS(SOL3)
+  #define HAS_SOLENOID_3 1
+#endif
 
-  #if PIN_EXISTS(E3_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E3))
-    #define HAS_E3_ENABLE 1
-  #endif
-  #if PIN_EXISTS(E3_DIR)
-    #define HAS_E3_DIR 1
-  #endif
-  #if PIN_EXISTS(E3_STEP)
-    #define HAS_E3_STEP 1
-  #endif
-  #if PIN_EXISTS(E3_MS1)
-    #define HAS_E3_MS_PINS 1
-  #endif
-  #if PIN_EXISTS(SOL3)
-    #define HAS_SOLENOID_3 1
-  #endif
+#if PIN_EXISTS(E4_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E4))
+  #define HAS_E4_ENABLE 1
+#endif
+#if PIN_EXISTS(E4_DIR)
+  #define HAS_E4_DIR 1
+#endif
+#if PIN_EXISTS(E4_STEP)
+  #define HAS_E4_STEP 1
+#endif
+#if PIN_EXISTS(E4_MS1)
+  #define HAS_E4_MS_PINS 1
+#endif
+#if PIN_EXISTS(SOL4)
+  #define HAS_SOLENOID_4 1
+#endif
 
-  #if PIN_EXISTS(E4_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E4))
-    #define HAS_E4_ENABLE 1
-  #endif
-  #if PIN_EXISTS(E4_DIR)
-    #define HAS_E4_DIR 1
-  #endif
-  #if PIN_EXISTS(E4_STEP)
-    #define HAS_E4_STEP 1
-  #endif
-  #if PIN_EXISTS(E4_MS1)
-    #define HAS_E4_MS_PINS 1
-  #endif
-  #if PIN_EXISTS(SOL4)
-    #define HAS_SOLENOID_4 1
-  #endif
+#if PIN_EXISTS(E5_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E5))
+  #define HAS_E5_ENABLE 1
+#endif
+#if PIN_EXISTS(E5_DIR)
+  #define HAS_E5_DIR 1
+#endif
+#if PIN_EXISTS(E5_STEP)
+  #define HAS_E5_STEP 1
+#endif
+#if PIN_EXISTS(E5_MS1)
+  #define HAS_E5_MS_PINS 1
+#endif
+#if PIN_EXISTS(SOL5)
+  #define HAS_SOLENOID_5 1
+#endif
 
-  #if PIN_EXISTS(E5_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E5))
-    #define HAS_E5_ENABLE 1
-  #endif
-  #if PIN_EXISTS(E5_DIR)
-    #define HAS_E5_DIR 1
-  #endif
-  #if PIN_EXISTS(E5_STEP)
-    #define HAS_E5_STEP 1
-  #endif
-  #if PIN_EXISTS(E5_MS1)
-    #define HAS_E5_MS_PINS 1
-  #endif
-  #if PIN_EXISTS(SOL5)
-    #define HAS_SOLENOID_5 1
-  #endif
+#if PIN_EXISTS(E6_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E6))
+  #define HAS_E6_ENABLE 1
+#endif
+#if PIN_EXISTS(E6_DIR)
+  #define HAS_E6_DIR 1
+#endif
+#if PIN_EXISTS(E6_STEP)
+  #define HAS_E6_STEP 1
+#endif
+#if PIN_EXISTS(E6_MS1)
+  #define HAS_E6_MS_PINS 1
+#endif
+#if PIN_EXISTS(SOL6)
+  #define HAS_SOLENOID_6 1
+#endif
 
-  #if PIN_EXISTS(E6_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E6))
-    #define HAS_E6_ENABLE 1
-  #endif
-  #if PIN_EXISTS(E6_DIR)
-    #define HAS_E6_DIR 1
-  #endif
-  #if PIN_EXISTS(E6_STEP)
-    #define HAS_E6_STEP 1
-  #endif
-  #if PIN_EXISTS(E6_MS1)
-    #define HAS_E6_MS_PINS 1
-  #endif
-  #if PIN_EXISTS(SOL6)
-    #define HAS_SOLENOID_6 1
-  #endif
-
-  #if PIN_EXISTS(E7_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E7))
-    #define HAS_E7_ENABLE 1
-  #endif
-  #if PIN_EXISTS(E7_DIR)
-    #define HAS_E7_DIR 1
-  #endif
-  #if PIN_EXISTS(E7_STEP)
-    #define HAS_E7_STEP 1
-  #endif
-  #if PIN_EXISTS(E7_MS1)
-    #define HAS_E7_MS_PINS 1
-  #endif
-  #if PIN_EXISTS(SOL7)
-    #define HAS_SOLENOID_7 1
-  #endif
-
-#endif // HAS_EXTRUDERS
+#if PIN_EXISTS(E7_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E7))
+  #define HAS_E7_ENABLE 1
+#endif
+#if PIN_EXISTS(E7_DIR)
+  #define HAS_E7_DIR 1
+#endif
+#if PIN_EXISTS(E7_STEP)
+  #define HAS_E7_STEP 1
+#endif
+#if PIN_EXISTS(E7_MS1)
+  #define HAS_E7_MS_PINS 1
+#endif
+#if PIN_EXISTS(SOL7)
+  #define HAS_SOLENOID_7 1
+#endif
 
 //
 // Trinamic Stepper Drivers
@@ -2441,10 +2348,7 @@
 #if PIN_EXISTS(DIGIPOTSS)
   #define HAS_MOTOR_CURRENT_SPI 1
 #endif
-#if HAS_EXTRUDERS && PIN_EXISTS(MOTOR_CURRENT_PWM_E)
-  #define HAS_MOTOR_CURRENT_PWM_E 1
-#endif
-#if HAS_MOTOR_CURRENT_PWM_E || ANY_PIN(MOTOR_CURRENT_PWM_X, MOTOR_CURRENT_PWM_Y, MOTOR_CURRENT_PWM_XY, MOTOR_CURRENT_PWM_Z)
+#if ANY_PIN(MOTOR_CURRENT_PWM_X, MOTOR_CURRENT_PWM_Y, MOTOR_CURRENT_PWM_XY, MOTOR_CURRENT_PWM_Z, MOTOR_CURRENT_PWM_E)
   #define HAS_MOTOR_CURRENT_PWM 1
 #endif
 

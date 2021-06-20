@@ -35,9 +35,7 @@
 #include <HardwareSerial.h>
 #include <SPI.h>
 
-enum StealthIndex : uint8_t {
-  LOGICAL_AXIS_LIST(STEALTH_AXIS_E, STEALTH_AXIS_X, STEALTH_AXIS_Y, STEALTH_AXIS_Z)
-};
+enum StealthIndex : uint8_t { STEALTH_AXIS_XY, STEALTH_AXIS_Z, STEALTH_AXIS_E };
 #define TMC_INIT(ST, STEALTH_INDEX) tmc_init(stepper##ST, ST##_CURRENT, ST##_MICROSTEPS, ST##_HYBRID_THRESHOLD, stealthchop_by_axis[STEALTH_INDEX], chopper_timing_##ST, ST##_INTERPOLATE)
 
 //   IC = TMC model number
@@ -353,7 +351,7 @@ enum StealthIndex : uint8_t {
     #endif
   #endif
 
-  enum TMCAxis : uint8_t { LINEAR_AXIS_LIST(X, Y, Z), X2, Y2, Z2, Z3, Z4, E0, E1, E2, E3, E4, E5, E6, E7, TOTAL };
+  enum TMCAxis : uint8_t { X, Y, Z, X2, Y2, Z2, Z3, Z4, E0, E1, E2, E3, E4, E5, E6, E7, TOTAL };
 
   void tmc_serial_begin() {
     #if HAS_TMC_HW_SERIAL
@@ -718,24 +716,19 @@ void restore_trinamic_drivers() {
 }
 
 void reset_trinamic_drivers() {
-  static constexpr bool stealthchop_by_axis[] = LOGICAL_AXIS_ARRAY(
-    ENABLED(STEALTHCHOP_E),
-    ENABLED(STEALTHCHOP_XY),
-    ENABLED(STEALTHCHOP_XY),
-    ENABLED(STEALTHCHOP_Z)
-  );
+  static constexpr bool stealthchop_by_axis[] = { ENABLED(STEALTHCHOP_XY), ENABLED(STEALTHCHOP_Z), ENABLED(STEALTHCHOP_E) };
 
   #if AXIS_IS_TMC(X)
-    TMC_INIT(X, STEALTH_AXIS_X);
+    TMC_INIT(X, STEALTH_AXIS_XY);
   #endif
   #if AXIS_IS_TMC(X2)
-    TMC_INIT(X2, STEALTH_AXIS_X);
+    TMC_INIT(X2, STEALTH_AXIS_XY);
   #endif
   #if AXIS_IS_TMC(Y)
-    TMC_INIT(Y, STEALTH_AXIS_Y);
+    TMC_INIT(Y, STEALTH_AXIS_XY);
   #endif
   #if AXIS_IS_TMC(Y2)
-    TMC_INIT(Y2, STEALTH_AXIS_Y);
+    TMC_INIT(Y2, STEALTH_AXIS_XY);
   #endif
   #if AXIS_IS_TMC(Z)
     TMC_INIT(Z, STEALTH_AXIS_Z);
@@ -799,7 +792,7 @@ void reset_trinamic_drivers() {
         stepperZ4.homing_threshold(CAT(TERN(Z4_SENSORLESS, Z4, Z), _STALL_SENSITIVITY));
       #endif
     #endif
-  #endif // USE SENSORLESS
+  #endif
 
   #ifdef TMC_ADV
     TMC_ADV()
