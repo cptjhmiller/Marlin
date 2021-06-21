@@ -713,8 +713,27 @@
   #define HAL_SENSITIVE_PINS
 #endif
 
-#define SENSITIVE_PINS { \
-  _X_PINS _Y_PINS _Z_PINS _X2_PINS _Y2_PINS _Z2_PINS _Z3_PINS _Z4_PINS _Z_PROBE \
+#ifdef RUNTIME_ONLY_ANALOG_TO_DIGITAL
+  #define _SP_END
+#else
+  #define _SP_END -2
+
+  // Move a regular pin in front to the end
+  template<pin_t F, pin_t ...D>
+  struct OnlyPins : OnlyPins<D..., F> { };
+
+  // Remove a -1 from the front
+  template<pin_t ...D>
+  struct OnlyPins<-1, D...> : OnlyPins<D...> { };
+
+  // Remove -2 from the front, emit the rest, cease propagation
+  template<pin_t ...D>
+  struct OnlyPins<_SP_END, D...> { static constexpr size_t size = sizeof...(D); static constexpr pin_t table[sizeof...(D)] PROGMEM = { D... }; };
+#endif
+
+#define SENSITIVE_PINS \
+  _X_PINS _Y_PINS _Z_PINS _I_PINS _J_PINS _K_PINS \
+  _X2_PINS _Y2_PINS _Z2_PINS _Z3_PINS _Z4_PINS _Z_PROBE \
   _E0_PINS _E1_PINS _E2_PINS _E3_PINS _E4_PINS _E5_PINS _E6_PINS _E7_PINS \
   _H0_PINS _H1_PINS _H2_PINS _H3_PINS _H4_PINS _H5_PINS _H6_PINS _H7_PINS \
   _PS_ON _FAN0 _FAN1 _FAN2 _FAN3 _FAN4 _FAN5 _FAN6 _FAN7 _FANC \
